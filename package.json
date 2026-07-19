@@ -1,0 +1,9 @@
+{
+  "name": "ai-landing-page-generator-vercel",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "openai": "^5.0.0"
+  }
+}

@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LandingLab AI</title>
+  <style>
+    :root{
+      --bg:#090b10; --panel:#11151d; --panel2:#171c26; --text:#f6f7fb;
+      --muted:#99a2b3; --line:#262d3a; --accent:#6c7cff; --accent2:#b06cff;
+      --success:#55d6a8; --shadow:0 30px 80px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:
+      radial-gradient(circle at 10% 0%,rgba(108,124,255,.18),transparent 28%),
+      radial-gradient(circle at 100% 10%,rgba(176,108,255,.12),transparent 30%),
+      var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    button,input,textarea,select{font:inherit}
+    .app{min-height:100vh;display:grid;grid-template-rows:auto 1fr}
+    .topbar{height:64px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 22px;background:rgba(9,11,16,.72);backdrop-filter:blur(18px);position:sticky;top:0;z-index:10}
+    .brand{display:flex;align-items:center;gap:11px;font-weight:750;letter-spacing:-.02em}
+    .logo{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;box-shadow:0 8px 25px rgba(108,124,255,.3)}
+    .badge{font-size:12px;color:#c7cbff;border:1px solid rgba(108,124,255,.35);padding:4px 8px;border-radius:999px;background:rgba(108,124,255,.08)}
+    .top-actions{display:flex;gap:9px}
+    .btn{border:1px solid var(--line);background:#151a23;color:var(--text);padding:9px 13px;border-radius:10px;cursor:pointer;transition:.18s}
+    .btn:hover{transform:translateY(-1px);border-color:#3a4354}
+    .btn.primary{background:linear-gradient(135deg,var(--accent),#7c62ff);border:0;font-weight:700;box-shadow:0 10px 28px rgba(108,124,255,.25)}
+    .workspace{display:grid;grid-template-columns:390px 1fr;min-height:calc(100vh - 64px)}
+    .sidebar{border-right:1px solid var(--line);padding:22px;background:linear-gradient(180deg,rgba(17,21,29,.92),rgba(9,11,16,.97));overflow:auto}
+    .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#8f9aff;margin-bottom:8px;font-weight:800}
+    h1{font-size:28px;line-height:1.08;margin:0 0 10px;letter-spacing:-.04em}
+    .lead{color:var(--muted);line-height:1.55;margin:0 0 22px}
+    .field{margin:15px 0}
+    label{display:block;font-size:13px;font-weight:700;margin:0 0 7px;color:#d9deea}
+    textarea,input,select{width:100%;background:#0d1118;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:11px 12px;outline:none}
+    textarea{min-height:122px;resize:vertical;line-height:1.45}
+    textarea:focus,input:focus,select:focus{border-color:#6978ff;box-shadow:0 0 0 3px rgba(108,124,255,.12)}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .chips{display:flex;flex-wrap:wrap;gap:8px}
+    .chip{border:1px solid var(--line);background:#111721;color:#aeb7c8;border-radius:999px;padding:7px 10px;font-size:12px;cursor:pointer}
+    .chip.active{color:#fff;border-color:#6c7cff;background:rgba(108,124,255,.13)}
+    .generate{width:100%;margin-top:17px;padding:13px 16px;border-radius:12px}
+    .status{display:none;margin-top:14px;border:1px solid var(--line);background:#0d121a;border-radius:12px;padding:12px}
+    .status.show{display:block}
+    .status-row{display:flex;align-items:center;gap:10px;color:#d9deea;font-size:13px}
+    .spinner{width:15px;height:15px;border:2px solid #374052;border-top-color:#8f9aff;border-radius:50%;animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .progress{height:5px;background:#1d2330;border-radius:999px;overflow:hidden;margin-top:10px}
+    .progress>div{height:100%;width:20%;background:linear-gradient(90deg,var(--accent),var(--accent2));animation:prog 2.4s ease-in-out infinite}
+    @keyframes prog{0%{width:8%}50%{width:72%}100%{width:96%}}
+    .main{min-width:0;display:grid;grid-template-rows:auto 1fr}
+    .previewbar{height:58px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:#0d1117}
+    .device{display:flex;gap:4px;background:#151a23;padding:4px;border-radius:9px}
+    .device button{background:transparent;border:0;color:#8f99aa;padding:6px 9px;border-radius:7px;cursor:pointer}
+    .device button.active{background:#252b37;color:#fff}
+    .tabs{display:flex;gap:8px}
+    .tabs button{border:0;background:transparent;color:#8f99aa;padding:8px 10px;cursor:pointer;border-radius:8px}
+    .tabs button.active{background:#171d27;color:#fff}
+    .canvas{padding:20px;background:
+      linear-gradient(45deg,#10141b 25%,transparent 25%) 0 0/24px 24px,
+      linear-gradient(-45deg,#10141b 25%,transparent 25%) 0 0/24px 24px,
+      linear-gradient(45deg,transparent 75%,#10141b 75%) 0 0/24px 24px,
+      linear-gradient(-45deg,transparent 75%,#10141b 75%) 0 0/24px 24px,#0c1016;
+      overflow:auto;display:grid;place-items:start center}
+    .frame-wrap{width:100%;max-width:1440px;height:calc(100vh - 162px);transition:.25s}
+    .frame-wrap.tablet{max-width:820px}
+    .frame-wrap.mobile{max-width:390px}
+    iframe{width:100%;height:100%;border:1px solid #2a3140;border-radius:16px;background:white;box-shadow:var(--shadow)}
+    pre{display:none;width:100%;height:100%;margin:0;border:1px solid #2a3140;border-radius:16px;background:#080b10;color:#cbd4e1;padding:18px;white-space:pre-wrap;overflow:auto;line-height:1.45}
+    .code pre{display:block}.code iframe{display:none}
+    .footer-note{font-size:11px;color:#6f7888;margin-top:18px;line-height:1.5}
+    @media(max-width:900px){.workspace{grid-template-columns:1fr}.sidebar{border-right:0;border-bottom:1px solid var(--line)}.frame-wrap{height:680px}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo">✦</div> LandingLab AI <span class="badge">Codex-powered</span></div>
+    <div class="top-actions">
+      <button class="btn" id="copyBtn">Copiar HTML</button>
+      <button class="btn" id="downloadBtn">Descargar</button>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <aside class="sidebar">
+      <div class="eyebrow">AI website builder</div>
+      <h1>Describe tu idea.<br>Obtén tu landing.</h1>
+      <p class="lead">Convierte una descripción en una landing page completa, responsive y lista para publicar.</p>
+
+      <div class="field">
+        <label for="brief">¿Qué quieres crear?</label>
+        <textarea id="brief" placeholder="Ej.: Una app de nutrición con IA para estudiantes universitarios que crea menús semanales baratos y saludables...">Una plataforma de tutorías con IA para universitarios que convierte apuntes en planes de estudio, quizzes y simulacros de examen.</textarea>
+      </div>
+
+      <div class="grid2">
+        <div class="field">
+          <label for="tone">Estilo</label>
+          <select id="tone">
+            <option>Minimalista</option><option selected>Startup premium</option><option>Editorial</option><option>Divertido</option><option>Corporativo</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="audience">Público</label>
+          <input id="audience" value="Estudiantes universitarios" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Paleta</label>
+        <div class="chips" id="paletteChips">
+          <button class="chip active" data-palette="violeta y azul eléctrico">Violeta</button>
+          <button class="chip" data-palette="verde esmeralda y negro">Esmeralda</button>
+          <button class="chip" data-palette="naranja cálido y crema">Naranja</button>
+          <button class="chip" data-palette="monocromo blanco y negro">Mono</button>
+        </div>
+      </div>
+
+      <button class="btn primary generate" id="generateBtn">✦ Generar landing con IA</button>
+      <div class="status" id="status">
+        <div class="status-row"><div class="spinner"></div><span id="statusText">Codex está diseñando la estructura…</span></div>
+        <div class="progress"><div></div></div>
+      </div>
+      <div class="footer-note">La API key permanece en el servidor. El navegador llama a <code>/api/generate</code>, y el backend llama a OpenAI.</div>
+    </aside>
+
+    <main class="main">
+      <div class="previewbar">
+        <div class="tabs">
+          <button class="active" data-tab="preview">Vista previa</button>
+          <button data-tab="code">Código</button>
+        </div>
+        <div class="device">
+          <button class="active" data-device="desktop">▰</button>
+          <button data-device="tablet">▯</button>
+          <button data-device="mobile">▯</button>
+        </div>
+      </div>
+      <div class="canvas">
+        <div class="frame-wrap" id="frameWrap">
+          <iframe id="preview" title="Vista previa"></iframe>
+          <pre id="code"></pre>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+const fallback = `<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:#070812;color:#fff}
+.hero{min-height:100vh;padding:28px 6vw 70px;background:radial-gradient(circle at 75% 20%,#654cff55,transparent 28%),linear-gradient(180deg,#10132a,#070812)}
+nav{display:flex;justify-content:space-between;align-items:center}.brand{font-weight:900;font-size:22px}.navcta,.cta{background:#7c65ff;color:white;padding:12px 18px;border-radius:12px;text-decoration:none;font-weight:800}
+main{max-width:1150px;margin:110px auto 0;text-align:center}.tag{display:inline-block;padding:8px 12px;border:1px solid #655cff66;border-radius:999px;color:#c9c5ff;background:#635cff18}
+h1{font-size:clamp(48px,7vw,92px);line-height:.94;letter-spacing:-.06em;margin:24px 0}p{font-size:20px;color:#b9bdd0;max-width:760px;margin:0 auto 34px;line-height:1.6}
+.actions{display:flex;gap:12px;justify-content:center}.ghost{border:1px solid #343951;color:#fff;padding:12px 18px;border-radius:12px;text-decoration:none}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:1100px;margin:90px auto 0}.card{padding:24px;text-align:left;border:1px solid #252a3d;border-radius:18px;background:#111526aa}.card b{font-size:18px}.card p{font-size:15px;margin:10px 0 0}
+@media(max-width:700px){.cards{grid-template-columns:1fr}main{margin-top:75px}.actions{flex-direction:column}}
+</style></head><body><section class="hero"><nav><div class="brand">StudyFlow AI</div><a class="navcta" href="#">Empieza gratis</a></nav><main><span class="tag">Tu copiloto para aprobar mejor</span><h1>De apuntes caóticos<br>a un plan que funciona.</h1><p>Convierte tus materiales de clase en planes de estudio, quizzes y simulacros personalizados en segundos.</p><div class="actions"><a class="cta" href="#">Crear mi plan →</a><a class="ghost" href="#">Ver cómo funciona</a></div><div class="cards"><div class="card"><b>⚡ Planes instantáneos</b><p>Organiza semanas de estudio según tus fechas y objetivos.</p></div><div class="card"><b>🧠 Quiz adaptativo</b><p>Practica justo aquello que todavía no dominas.</p></div><div class="card"><b>📈 Progreso visible</b><p>Detecta bloqueos antes del examen y mejora tu foco.</p></div></div></main></section></body></html>`;
+
+let currentHtml = fallback;
+const preview = document.getElementById('preview');
+const code = document.getElementById('code');
+const frameWrap = document.getElementById('frameWrap');
+const status = document.getElementById('status');
+const statusText = document.getElementById('statusText');
+const genBtn = document.getElementById('generateBtn');
+let palette = 'violeta y azul eléctrico';
+
+function render(html){
+  currentHtml = html;
+  preview.srcdoc = html;
+  code.textContent = html;
+}
+render(fallback);
+
+document.querySelectorAll('.chip').forEach(btn=>btn.onclick=()=>{
+  document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
+  btn.classList.add('active'); palette=btn.dataset.palette;
+});
+document.querySelectorAll('[data-device]').forEach(btn=>btn.onclick=()=>{
+  document.querySelectorAll('[data-device]').forEach(x=>x.classList.remove('active'));
+  btn.classList.add('active'); frameWrap.className='frame-wrap '+(btn.dataset.device==='desktop'?'':btn.dataset.device);
+});
+document.querySelectorAll('[data-tab]').forEach(btn=>btn.onclick=()=>{
+  document.querySelectorAll('[data-tab]').forEach(x=>x.classList.remove('active'));
+  btn.classList.add('active'); frameWrap.classList.toggle('code',btn.dataset.tab==='code');
+});
+
+const steps=['Codex está diseñando la estructura…','Escribiendo el copy de conversión…','Aplicando estilos responsive…','Puliendo la experiencia visual…'];
+genBtn.onclick=async()=>{
+  const payload={
+    brief:document.getElementById('brief').value.trim(),
+    tone:document.getElementById('tone').value,
+    audience:document.getElementById('audience').value.trim(),
+    palette
+  };
+  if(!payload.brief) return alert('Describe primero tu negocio o producto.');
+  status.classList.add('show'); genBtn.disabled=true;
+  let i=0; statusText.textContent=steps[0];
+  const timer=setInterval(()=>{i=(i+1)%steps.length;statusText.textContent=steps[i]},1100);
+  try{
+    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const data=await r.json();
+    if(!r.ok) throw new Error(data.error||'No se pudo generar');
+    render(data.html);
+  }catch(e){
+    alert('Error: '+e.message+'\\n\\nComprueba que el servidor está ejecutándose y OPENAI_API_KEY está configurada.');
+  }finally{
+    clearInterval(timer); status.classList.remove('show'); genBtn.disabled=false;
+  }
+};
+
+document.getElementById('copyBtn').onclick=async()=>{await navigator.clipboard.writeText(currentHtml);alert('HTML copiado');};
+document.getElementById('downloadBtn').onclick=()=>{
+  const blob=new Blob([currentHtml],{type:'text/html'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='landing.html';a.click();URL.revokeObjectURL(a.href);
+};
+</script>
+</body></html>
