@@ -3,7 +3,7 @@ import { createHmac } from "node:crypto";
 
 const MAX_BODY_BYTES = 8_192;
 const MAX_BRIEF = 3_000;
-const MAX_OUTPUT_TOKENS = 3_500;
+const MAX_OUTPUT_TOKENS = 6_000;
 const PER_MINUTE = 5;
 const PER_DAY = 30;
 
@@ -125,7 +125,7 @@ No uses Markdown, fences ni dependencias externas obligatorias.`;
   try {
     const client = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
-      timeout: 25_000,
+      timeout: 60_000,
       maxRetries: 0,
     });
     const result = await client.responses.create({
@@ -141,7 +141,12 @@ No uses Markdown, fences ni dependencias externas obligatorias.`;
     }
     return json(res, 200, { html });
   } catch (error) {
-    console.error("OpenAI generation:", error.status || error.name || "failed");
+console.error("OpenAI generation:", {
+  name: error.name,
+  status: error.status,
+  code: error.code,
+  message: error.message,
+});
     return json(res, 502, { error: "No se pudo generar la landing. Inténtalo más tarde." });
   }
 }
